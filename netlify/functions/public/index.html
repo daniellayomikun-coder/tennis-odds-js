@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Call It — tennis odds from the market</title>
+<style>
+:root{--foam:#e6f4ef;--coral:#e8574a;--sea:#0b2a31;--teal:#4fd0da;--gold:#f2c14e;color-scheme:light dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{margin:0;min-height:100vh;background:radial-gradient(120% 90% at 85% 0,#15474f,var(--sea) 60%) fixed,#0b2a31;color:var(--foam);font:17px/1.55 "Work Sans",system-ui,sans-serif}
+h1{font:800 clamp(2.4rem,9vw,3.4rem)/1 Fraunces,Georgia,serif;letter-spacing:-.025em;margin:0}
+:focus-visible{outline:3px solid #fff;outline-offset:3px}
+[hidden]{display:none!important}
+.toprow{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.toprow a{color:#a9d3c6;font-size:.9rem;text-decoration:none;white-space:nowrap}
+.about{max-width:720px;margin:0 auto;padding:20px 20px 60px}
+.about a#backlink{color:#a9d3c6;text-decoration:none;font-size:.92rem}
+.about h2{font:800 clamp(1.9rem,7vw,2.6rem) Fraunces,Georgia,serif;margin:16px 0 6px}
+.about h3{font:800 1.2rem Fraunces,Georgia,serif;margin:22px 0 6px}
+.about p{color:#dcefe8;max-width:36em}
+.fine2{color:#8dc0b1;font-size:.88rem;border-top:1px solid #1d4a50;padding-top:16px;margin-top:26px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:#0b2a31ee;backdrop-filter:blur(8px);border-bottom:1px solid #1d4a50;padding:14px 20px 12px}
+.w{max-width:720px;margin:0 auto}
+.betday{max-width:720px;margin:12px auto 0;padding:0 20px}
+.betday-card{background:linear-gradient(135deg,#153f46,#0e3037);border:1px solid #2b6268;border-radius:18px;padding:12px 14px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;width:100%;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.betday-label{color:var(--coral);font:800 .7rem/1 "Work Sans",sans-serif;text-transform:uppercase;letter-spacing:.1em}
+.betday-match{font:800 1.05rem/1.2 Fraunces,Georgia,serif;margin-top:4px}
+.betday-meta{color:#a9d3c6;font-size:.74rem;margin-top:3px}
+.betday-meta b{color:#fff}
+.betday-pick{text-align:right}
+.betday-pick b{display:block;font:800 1rem/1.1 Fraunces,Georgia,serif;color:#fff}
+.betday-pick small{display:block;color:#a9d3c6;font-size:.72rem;margin-top:3px}
+.betday-pick strong{display:block;color:var(--teal);font:800 1.25rem/1 Fraunces,Georgia,serif;margin-top:4px}
+.pickbox,.tier{margin:14px 0 0;background:#0e3239;border:1px solid #23555c;border-radius:18px;padding:12px 14px}
+.pickbox h3,.tier h3{margin:0 0 7px;color:#fff;font:800 1rem/1 Fraunces,Georgia,serif}
+.pickrow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border-top:1px solid #1d4a50;padding:7px 0;color:#a9d3c6;font-size:.82rem}
+.pickrow b{color:#fff;font-weight:700}
+.pickrow span{text-align:right;color:#8dc0b1;font-variant-numeric:tabular-nums}
+.pickrow.pickable{width:100%;background:none;border:0;border-top:1px solid #1d4a50;cursor:pointer;text-align:left;font:inherit}
+.pickrow.pickable.sel{background:#173d43;border-radius:10px}
+.pickrow.best{background:linear-gradient(90deg,#f2c14e26,#f2c14e0d);border:1px solid #f2c14e77;border-radius:10px;padding:8px 10px;margin:2px 0 4px}
+.pickrow.best b,.pickrow.best span{color:var(--gold)}
+.pickrow .pp{display:inline-block;margin-right:8px}
+.betslip{max-width:720px;margin:16px auto 0;background:#0e3239;border:1px solid #2b6268;border-radius:18px;padding:14px}
+.betslip h3{margin:0;color:#fff;font:800 1.15rem/1 Fraunces,Georgia,serif}
+.slipsub{color:#8fb9ad;font-size:.76rem;margin:4px 0 10px}
+.sliplegs{display:grid;gap:7px}
+.slipleg{border:1px solid #26535a;border-radius:10px;padding:8px 10px;display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.slipleg b{font-size:.8rem;color:#fff}.slipleg small{display:block;color:#8fb9ad}.slipleg button{border:0;background:none;color:#e7a19a;font-size:1rem;cursor:pointer}
+.slipbottom{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;border-top:1px solid #1d4a50;padding-top:12px}
+.slipbottom label{display:block;color:#8fb9ad;font-size:.7rem;margin-bottom:4px}.slipbottom input{width:100%;background:#09262c;border:1px solid #315e63;color:#fff;border-radius:9px;padding:9px}
+.slipreturn{align-self:end;text-align:right;color:#8fb9ad;font-size:.72rem}.slipreturn b{display:block;color:var(--teal);font:800 1.2rem Fraunces,Georgia,serif}
+.why{color:#8fb9ad;font-size:.74rem;margin:8px 0 0;line-height:1.4}
+.stage{max-width:720px;margin:0 auto;padding:18px 20px 8px;display:flex;flex-direction:column;min-height:calc(100svh - 140px)}
+.meta{display:flex;justify-content:space-between;gap:10px;color:#a9d3c6;font-size:.95rem;margin-bottom:12px}
+.panels{flex:1;display:flex;flex-direction:column;gap:8px;min-height:360px}
+.pn{flex:1 1 0;min-height:92px;display:flex;flex-direction:column;justify-content:space-between;text-align:left;color:#fff;border:3px solid transparent;border-radius:22px;padding:12px 18px 14px;cursor:pointer;font:inherit;transition:flex-grow .7s cubic-bezier(.2,.8,.2,1)}
+.pn[aria-pressed="true"]{border-color:#fff}
+.tg{display:flex;gap:6px;min-height:22px}
+.tg i{font:600 .72rem "Work Sans",sans-serif;font-style:normal;background:#0b2a31b0;color:#fff;border-radius:999px;padding:2px 10px}
+.tg i.y{background:#fff;color:#0b2a31}
+.row{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.row b{font:800 clamp(1.5rem,7vw,2.8rem)/1 Fraunces,Georgia,serif;letter-spacing:-.02em}
+.row em{font:800 clamp(2rem,10vw,4.2rem)/.9 Fraunces,Georgia,serif;font-style:normal;font-variant-numeric:tabular-nums}
+.fair{color:#a9d3c6;margin:12px 0 0;text-align:center;font-size:.95rem}
+.fair b{color:#fff}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:14px}
+.nav button{width:54px;height:54px;border-radius:50%;border:2px solid #2f5b58;background:none;color:#fff;font-size:1.8rem;line-height:1;cursor:pointer}
+.dots{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}
+.dots i{width:9px;height:9px;border-radius:50%;background:#2f5b58}
+.dots i.on{background:var(--coral);transform:scale(1.35)}
+.fine{max-width:720px;margin:26px auto 0;padding:20px 20px 24px;border-top:1px solid #1d4a50;color:#8dc0b1;font-size:.88rem}
+.pans{max-width:1100px;margin:26px auto 0;padding:0 20px}
+.strip{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;align-items:stretch}
+.pn2{flex:0 0 min(84vw,330px);scroll-snap-align:start;background:#0e3239;border:1px solid #23555c;border-radius:20px;padding:14px 14px 10px}
+@media(min-width:1000px){.pn2{flex:1 1 0}.hint{display:none}}
+.pn2 h2{font:800 1.3rem/1 Fraunces,Georgia,serif;letter-spacing:-.02em;margin:0}
+.cap{color:#a9d3c6;font-size:.78rem;margin:4px 0 10px}
+.cap input{width:66px;font:inherit;color:#fff;background:#0f373d;border:1px solid #2f5b58;border-radius:8px;padding:2px 6px;margin-left:4px}
+.hint{color:#7fb3a5;font-size:.8rem;margin:2px 0 0;text-align:right}
+.rg{display:grid;grid-template-columns:32px repeat(6,1fr);gap:1px 3px;font-size:.72rem;align-items:center;text-align:right}
+.rg .hh{color:#7fb3a5;font-size:.65rem}
+.rg .ol{text-align:left;font:800 .95rem Fraunces,Georgia,serif}
+.rg .pr{color:#8dc0b1;font-size:.62rem;margin-bottom:7px}
+.ra{color:var(--coral)}.rb{color:var(--teal)}.rc{color:#a9d3c6}
+.tr,.ac{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;width:100%;text-align:left;background:none;border:0;border-top:1px solid #1d4a50;color:inherit;font:inherit;padding:7px 0;cursor:pointer}
+.ac{grid-template-columns:1fr auto}
+.tr .n{font:800 1.05rem Fraunces,Georgia,serif;color:var(--coral);width:14px}
+.nm b{display:block;font-size:.92rem;line-height:1.2}
+.nm small{display:block;color:#a9d3c6;font-size:.72rem;line-height:1.25}
+.pv{text-align:right}.pv b{display:block;font:800 1.05rem Fraunces,Georgia,serif;line-height:1.1}.pv small{color:#a9d3c6;font-size:.7rem}
+@media(prefers-reduced-motion:reduce){.pn{transition:none}}
+.morelinks{max-width:720px;margin:0 auto;padding:0 20px 34px;display:flex;justify-content:center;font-size:.68rem}
+.morelinks a{color:#7fb3a5;text-decoration:none;border-bottom:1px solid #2f5b58}
+.more{max-width:720px;margin:0 auto;padding:16px 20px 60px}
+.moreback{color:#a9d3c6;text-decoration:none;font-size:.85rem}
+.moretitle{font:800 clamp(1.6rem,6vw,2.2rem)/1.1 Fraunces,Georgia,serif;margin:12px 0 4px}
+.moremeta{color:#a9d3c6;font-size:.82rem;margin:0 0 10px}
+.morenav{display:flex;align-items:center;justify-content:space-between;color:#8dc0b1;font-size:.78rem;margin:8px 0 4px}
+.morenav button{width:40px;height:40px;border-radius:50%;border:2px solid #2f5b58;background:none;color:#fff;font-size:1.3rem;line-height:1;cursor:pointer}
+.toprow nav{display:flex;gap:16px}
+.trk{max-width:720px;margin:0 auto;padding:20px 20px 60px}
+.trk a.back{color:#a9d3c6;text-decoration:none;font-size:.92rem}
+.trk h2{font:800 clamp(1.9rem,7vw,2.6rem) Fraunces,Georgia,serif;margin:16px 0 10px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.stat{background:#0e3239;border:1px solid #23555c;border-radius:16px;padding:12px 14px}
+.stat small{display:block;color:#a9d3c6;font-size:.72rem}
+.stat b{font:800 1.7rem/1.1 Fraunces,Georgia,serif;color:#fff}
+.prow{background:#0e3239;border:1px solid #23555c;border-radius:14px;padding:10px 12px;margin-top:10px}
+.prow b{display:block;font-size:.9rem;color:#fff}
+.prow small{display:block;color:#8fb9ad;font-size:.74rem}
+.prow .rb2{display:flex;gap:8px;margin-top:8px;align-items:center}
+.prow button{font:600 .78rem "Work Sans",sans-serif;color:#dff3ec;background:none;border:1px solid #2b6268;border-radius:999px;padding:5px 14px;cursor:pointer}
+.prow button.on.w{background:#7fd6a4;color:#0b2a31;border-color:#7fd6a4}
+.prow button.on.l{background:#e7a19a;color:#0b2a31;border-color:#e7a19a}
+.prow span{margin-left:auto;color:var(--teal);font-weight:700;font-size:.85rem}
+.chips{max-width:720px;margin:12px auto 0;padding:0 20px;display:flex;gap:8px;flex-wrap:wrap}
+.chips button{font:600 .78rem "Work Sans",sans-serif;color:#dff3ec;background:#0e3239;border:1px solid #2b6268;border-radius:999px;padding:7px 14px;cursor:pointer}
+.chips button[aria-pressed="true"]{background:#e6f4ef;color:#0b2a31;border-color:#e6f4ef}
+.mdl{display:grid;grid-template-columns:1fr auto auto;gap:4px 14px;font-size:.8rem;color:#a9d3c6;align-items:baseline}
+.mdl b{color:#fff;font-weight:700}.mdl .h{color:#7fb3a5;font-size:.68rem}.mdl span:not(.h){text-align:right;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="bar"><div class="w"><div class="toprow"><h1>Call it.</h1><nav><a href="#tracker" id="tracklink">Tracker</a><a href="#about" id="aboutlink">How odds work</a></nav></div></div></div>
+<div class="chips" id="chips" role="group" aria-label="Filter matches"></div>
+<div class="why" id="status" style="max-width:720px;margin:6px auto 0;padding:0 20px"></div>
+<section class="betday" aria-label="Bet of the Day" id="betday"></section>
+<main class="stage" id="st"></main>
+<article class="about" id="aboutPage" hidden>
+<a href="#" id="backlink">← Back to matches</a>
+<h2>How the numbers work</h2>
+<p>Only ATP 1000, WTA 1000 and ATP Challenger singles are shown. Pinnacle often posts a game handicap and a total-games line but no moneyline. We read those lines, strip the bookmaker margin, and fit the serve strength of both players that reproduces them. That gives a win probability, fair moneyline odds, an estimated bookmaker moneyline, and a predicted total games and handicap. When Pinnacle does post a real moneyline, we show it next to the model.</p>
+<h3>Fair odds</h3><p>Fair odds are just 100 divided by the win chance. A 50% chance is fair odds of 2.00: bet 1 and get 2 back, on average, with no house edge. Real bookmakers pay less than fair odds.</p>
+<h3>Rollovers</h3><p>Rolling a bet means putting the whole return on the next pick. The payout multiplies fast, but the chance of survival shrinks just as fast, and at fair odds the two cancel out.</p>
+<h3>Accumulators</h3><p>An accumulator needs every leg to land. Chances multiply, so four picks at 80% each only land about 41% of the time.</p>
+<p class="fine2">For fun and learning, not betting advice. If gambling stops being fun, talk to someone you trust or a local support service.</p>
+</article>
+<article class="more" id="morePage" hidden></article>
+<article class="trk" id="trackPage" hidden></article>
+<div class="pans" id="pans"><div class="strip">
+<section class="pn2" aria-label="Rollover"><h2>Rollover</h2><p class="cap">5 rolls · start <input id="rs" type="number" min="1" value="100" aria-label="Starting amount"></p><div id="roll"></div></section>
+<section class="pn2" aria-label="Top bets"><h2>Top bets</h2><p class="cap">Chance and fair odds. Tap to open.</p><div id="topc"></div></section>
+<section class="pn2" aria-label="Top accumulators"><h2>Top accumulators</h2><p class="cap">Chance all land and fair odds</p><div id="accs"></div></section>
+</div><p class="hint">Swipe for more →</p></div>
+<div class="fine" id="fine">Fair odds are 100 divided by the win chance and include no bookmaker margin. At fair odds the average result of a rollover equals your start, and real bookmaker odds are worse. This is for fun and learning, not betting advice.</div>
+<div class="morelinks" id="morelinks"><a id="ml" href="#/more/0">More on this match</a></div>
+<script>
+/* g = [player1, player2, start, [p1%, p2%], label, pick] */
+var ALL=[],G=[],META=null,filt={cat:"all",pickem:false};
+const MIN_BOD_ODDS=1.5,TOP_N=3;
+const $=i=>document.getElementById(i);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const r1=x=>Math.round(x*10)/10;
+const lsGet=(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const RM=matchMedia("(prefers-reduced-motion:reduce)").matches;
+let slip=lsGet("betslip",[]),calls=lsGet("calls",{}),i=0,view="main",swiped=false,routed=null;
+const topIdx=g=>g[3][0]>=g[3][1]?0:1;
+const tennisPick=g=>g[5];
+const tennisProb=t=>t.prob||100/(t.pickOdds||t.odds[1]);
+
+/* set handicap from the match-win chance (best of 3) */
+function setHcaps(g){
+  const S=g[5]&&g[5].sets;
+  if(S){const fv=topIdx(g),mk=(pl,line,pr,minus,ix)=>({market:"Set handicap",pick:pl+" "+line+" sets",prob:r1(pr*100),odds:+(1/pr).toFixed(2),minus,side:ix===fv?"f":"u"});
+    return[mk(g[0],"-1.5",S.A20,true,0),mk(g[1],"-1.5",S.B20,true,1),mk(g[0],"+1.5",1-S.B20,false,0),mk(g[1],"+1.5",1-S.A20,false,1)].filter(x=>x.prob>=1&&x.prob<99.9)}
+  const p=g[3][0]/100,f=s=>s*s*(3-2*s);let lo=0,hi=1;
+  for(let n=0;n<40;n++){const m=(lo+hi)/2;if(f(m)<p)lo=m;else hi=m}
+  const s=(lo+hi)/2,q=1-s,p1m=s*s,p2m=q*q,p1p=1-p2m,p2p=1-p1m,fv=topIdx(g);
+  const mk=(pl,line,pr,minus,ix)=>({market:"Set handicap",pick:pl+" "+line+" sets",prob:r1(pr*100),odds:+(1/pr).toFixed(2),minus,side:ix===fv?"f":"u"});
+  return[mk(g[0],"-1.5",p1m,true,0),mk(g[1],"-1.5",p2m,true,1),mk(g[0],"+1.5",p1p,false,0),mk(g[1],"+1.5",p2p,false,1)].filter(x=>x.prob>=1&&x.prob<99.9)
+}
+/* markets for one match: engine pick, Winner, Set handicap */
+function tennisFlat(n){
+  const g=G[n],t=g[5],out=[],k=g[6]+"-",fv=topIdx(g);
+  if(t.pickOdds)out.push({key:k+"eng",market:t.market,pick:t.market,prob:tennisProb(t),odds:t.pickOdds,eng:true,short:t.prediction});
+  out.push({key:k+"w0",market:"Winner",pick:g[0],prob:g[3][0],odds:t.odds[0],side:fv===0?"f":"u"},{key:k+"w1",market:"Winner",pick:g[1],prob:g[3][1],odds:t.odds[1],side:fv===1?"f":"u"});
+  setHcaps(g).forEach((h,j)=>out.push(Object.assign({key:k+"sh"+j},h)));
+  return out
+}
+const visible=x=>x.eng||(x.side!=="u"&&x.prob>=50);
+function tennisTop(n){
+  const L=tennisFlat(n).filter(visible),e=L.find(x=>x.eng),out=e?[e]:[];
+  L.filter(x=>!x.eng).sort((a,b)=>b.prob-a.prob).slice(0,TOP_N-out.length).forEach(x=>out.push(x));
+  return out
+}
+
+/* ===== BET OF THE DAY ===== */
+function betOfDay(){
+  const pool=[];
+  G.forEach((g,gi)=>tennisFlat(gi).filter(x=>x.eng||x.minus).filter(x=>x.prob>=50&&x.side!=="u").forEach(x=>pool.push({m:gi,gi,key:x.key,match:g[0]+" vs "+g[1],market:x.market,pick:x.pick,short:x.eng?x.short:x.pick,prob:x.prob,odds:x.odds})));
+  const n=pool.length;let best=null;
+  const consider=legs=>{let odds=1,prob=1;legs.forEach(l=>{odds*=l.odds;prob*=l.prob/100});if(odds<MIN_BOD_ODDS)return;if(!best||prob>best.prob+1e-9||(Math.abs(prob-best.prob)<=1e-9&&legs.length<best.legs.length))best={legs,odds,prob}};
+  for(let a=0;a<n;a++){consider([pool[a]]);for(let b=a+1;b<n;b++){if(pool[b].m===pool[a].m)continue;consider([pool[a],pool[b]]);for(let c=b+1;c<n;c++){if(pool[c].m===pool[a].m||pool[c].m===pool[b].m)continue;consider([pool[a],pool[b],pool[c]])}}}
+  return best
+}
+function renderBetDay(){
+  const b=betOfDay();if(!b){$("betday").innerHTML="";return}
+  const L=b.legs,single=L.length===1,pct=(b.prob*100).toFixed(1);
+  const label="Bet of the Day · "+(single?"Tennis":L.length+"-fold accumulator");
+  const left=single?'<div class="betday-match">'+esc(L[0].match)+'</div><div class="betday-meta">'+esc(L[0].market)+(L[0].pick!==L[0].market?': '+esc(L[0].pick):'')+' · '+pct+'% chance</div>'
+    :'<div class="betday-match">'+pct+'% chance all land</div>'+L.map(l=>'<div class="betday-meta"><b>'+esc(l.short)+'</b> · '+esc(l.match)+'</div>').join('');
+  const right=single?'<b>'+esc(L[0].short)+'</b><small>Pick odds</small>':'<b>'+L.length+' legs</b><small>Combined odds</small>';
+  $("betday").innerHTML='<button class="betday-card" id="bdcard"><div><div class="betday-label">'+label+'</div>'+left+'</div><div class="betday-pick">'+right+'<strong>'+b.odds.toFixed(2)+'</strong></div></button>';
+  $("bdcard").onclick=()=>{
+    if(!single){slip=L.map(l=>({key:l.key,match:l.match,market:l.market,pick:l.pick,odds:l.odds}));slipSave()}
+    i=L[0].gi;route("/"+i);
+    if(single)scrollTo({top:0,behavior:RM?"auto":"smooth"});else setTimeout(()=>{const e=$("betslip");if(e)e.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"})},150)
+  }
+}
+
+/* ===== BET SLIP ===== */
+const slipSave=()=>lsSet("betslip",slip);
+function addSlip(item){if(slip.some(x=>x.key===item.key))slip=slip.filter(x=>x.key!==item.key);else slip.push(item);slipSave();if(view==="more")renderMore(true);else renderSlip()}
+function renderSlip(){
+  const el=$("betslip");if(!el)return;
+  const stake=+(($("slipstake")||{}).value||100),odds=slip.reduce((a,x)=>a*x.odds,1);
+  el.innerHTML='<h3>Bet slip <span style="float:right;color:#8fb9ad;font:600 .72rem Work Sans,sans-serif">'+slip.length+' pick'+(slip.length===1?'':'s')+'</span></h3><div class="slipsub">Tap a pick to add or remove it.</div><div class="sliplegs">'+(slip.length?slip.map(x=>'<div class="slipleg"><div><b>'+esc(x.pick)+'</b><small>'+esc(x.match)+' · '+esc(x.market)+'</small></div><div><button data-remove="'+x.key+'" aria-label="Remove pick">×</button><small>'+x.odds.toFixed(2)+'</small></div></div>').join(''):'<div class="why">No picks selected yet.</div>')+'</div><div class="slipbottom"><div><label>STAKE</label><input id="slipstake" type="number" min="1" value="'+stake+'"></div><div class="slipreturn">Combined odds '+(slip.length?odds.toFixed(2):'—')+'<b>₦'+(slip.length?(stake*odds).toFixed(2):'0.00')+'</b></div></div>';
+  el.querySelectorAll("[data-remove]").forEach(b=>{b.onclick=()=>{slip=slip.filter(x=>x.key!==b.dataset.remove);slipSave();renderSlip()}});
+  $("slipstake").oninput=renderSlip
+}
+function fillAccumulator(a){
+  slip=a.L.map((f,j)=>({key:"acc-"+f.gi+"-"+j,match:f.g[0]+" vs "+f.g[1],market:"Winner",pick:f.lab,odds:tennisPick(f.g).odds[f.m]}));
+  slipSave();i=a.L[0].gi;route("/"+i);
+  setTimeout(()=>{const b=$("betslip");if(b)b.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"})},120)
+}
+
+/* ===== ROUTING (#/3 = match page, #/more/3 = all picks, #about) ===== */
+function route(h){routed=h;try{location.hash=h}catch(e){}apply(h)}
+function setView(v){
+  view=v;
+  const show=(id,on)=>{const el=$(id);if(el)el.hidden=!on};
+  show("aboutPage",v==="about");show("trackPage",v==="track");show("morePage",v==="more");
+  ["st","betday","pans","fine","morelinks"].forEach(id=>show(id,v==="main"))
+}
+function go(d){if(!G.length)return;i=(i+d+G.length)%G.length;route("/"+i)}
+function goMore(d){if(!G.length)return;i=(i+d+G.length)%G.length;route("/more/"+i)}
+function apply(h){
+  if(h==="about"){setView("about");scrollTo(0,0);return}
+  if(h==="tracker"){setView("track");renderTracker();scrollTo(0,0);return}
+  let m=h.match(/^\/more\/(\d+)$/);
+  if(m){i=Math.max(0,Math.min(+m[1],G.length-1));setView("more");renderMore(false);scrollTo(0,0);return}
+  const was=view!=="main";setView("main");if(was)scrollTo(0,0);
+  m=h.match(/^\/(\d+)$/);if(m)i=Math.max(0,Math.min(+m[1],G.length-1));
+  renderBetDay();render(true)
+}
+function fromHash(){const h=location.hash.replace("#","");if(h===routed)return;routed=h;apply(h)}
+addEventListener("hashchange",fromHash);
+
+/* ===== MATCH PAGE ===== */
+const ITEMS={};
+function pickRow(x,best){
+  ITEMS[x.key]=x;
+  const sel=slip.some(s=>s.key===x.key),label=x.market&&x.market!==x.pick?x.market+': '+x.pick:x.pick;
+  return'<button class="pickrow pickable '+(best?'best ':'')+(sel?'sel':'')+'" data-key="'+x.key+'"><b>'+esc(label)+'</b><span><span class="pp">'+x.prob.toFixed(1)+'%</span>'+x.odds.toFixed(2)+'</span></button>'
+}
+function wirePicks(root,g){
+  root.querySelectorAll("[data-key]").forEach(b=>{b.onclick=()=>{const x=ITEMS[b.dataset.key];if(x)addSlip({key:x.key,match:g[0]+" vs "+g[1],market:x.market,pick:x.pick,odds:x.odds})}})
+}
+function modelBox(g){
+  const t=g[5],M=t.model;if(!M)return"";
+  const sg=v=>(v>0?"+":"")+v.toFixed(1),nm=n=>String(n).split(" ").slice(-1)[0];
+  const row=(l,a,b)=>'<b>'+l+'</b><span>'+a+'</span><span>'+b+'</span>';
+  return'<div class="pickbox"><h3>Model numbers</h3><div class="mdl"><span class="h"></span><span class="h">'+esc(nm(g[0]))+'</span><span class="h">'+esc(nm(g[1]))+'</span>'
+   +row("Win chance",g[3][0]+"%",g[3][1]+"%")+row("Fair moneyline",M.fair[0].toFixed(2),M.fair[1].toFixed(2))
+   +row(t.src==="Pinnacle moneyline"?"Pinnacle moneyline":"Est. bookmaker moneyline",t.odds[0].toFixed(2),t.odds[1].toFixed(2))
+   +row("Hold chance",M.holds[0]+"%",M.holds[1]+"%")
+   +'<b>Predicted handicap</b><span>'+esc(nm(g[0]))+' '+sg(-M.spread)+'</span><span>market '+sg(-M.mktSpread)+'</span>'
+   +'<b>Predicted total games</b><span>'+M.total.toFixed(1)+'</span><span>market '+M.mktTotal.toFixed(1)+'</span></div>'
+   +'<p class="why">'+(M.loose?"The model could not match the total-games line exactly, so the predicted total differs from the market. ":"")+"Predicted handicap and total are the model average results; market numbers are the middle of the bookmaker lines.</p></div>"
+}
+function render(anim){
+  if(!G.length){$("st").innerHTML='<p class="fair" style="padding:60px 0">'+(META?"No matches for this filter right now.":"Loading matches…")+'</p>';return}
+  const g=G[i],m=topIdx(g),t=tennisPick(g),key=g[6],cols=["#1a7f8f","#e8574a"];
+  const when=new Date(g[2]).toLocaleString(undefined,{weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+  let h='<div class="meta"><span>'+when+'</span><span>'+esc(g[4])+'</span></div><div class="panels">';
+  [g[0],g[1]].forEach((nm,k)=>{h+='<button class="pn" aria-pressed="'+(calls[key]===k)+'" style="background:'+cols[k]+'"><span class="tg">'+(k==m?"<i>Model pick</i>":"")+(calls[key]===k?'<i class="y">Your call</i>':"")+'</span><span class="row"><b>'+esc(nm)+'</b><em>'+g[3][k]+'%</em></span></button>'});
+  h+='</div><p class="fair">Fair odds on '+esc(g[m])+': <b>'+(100/g[3][m]).toFixed(2)+'</b></p>';
+  h+='<div class="pickbox"><h3>Top picks</h3>'+tennisTop(i).map((x,r)=>pickRow(x,r===0)).join('')+'<p class="why">'+esc(t.reason)+'</p></div>'+modelBox(g);
+  h+='<section class="betslip" id="betslip" aria-label="Bet slip"></section><div class="nav"><button id="pv" aria-label="Previous match">‹</button><div class="dots" aria-label="Match '+(i+1)+' of '+G.length+'">'+G.map((_,j)=>'<i class="'+(j==i?"on":"")+'"></i>').join("")+'</div><button id="nx" aria-label="Next match">›</button></div><p class="fair" id="mine"></p>';
+  $("st").innerHTML=h;
+  renderSlip();wirePicks($("st"),g);$("ml").href="#/more/"+i;
+  let n=0,ag=0;G.forEach(x=>{const c=calls[x[6]];if(c!==undefined){n++;if(c===topIdx(x))ag++}});
+  $("mine").textContent=n?"Your calls: "+n+" of "+G.length+" · With the model: "+ag+" · Against it: "+(n-ag):"Tap a side to make your call. Swipe for the next match.";
+  const ps=[].slice.call(document.querySelectorAll(".pn"));
+  ps.forEach((b,k)=>{b.style.flexGrow=(anim&&!RM)?1:g[3][k];b.onclick=()=>{if(swiped)return;if(calls[key]===k)delete calls[key];else calls[key]=k;lsSet("calls",calls);render(false)}});
+  if(anim&&!RM)requestAnimationFrame(()=>requestAnimationFrame(()=>{ps.forEach((b,k)=>{b.style.flexGrow=g[3][k]})}));
+  $("pv").onclick=()=>go(-1);$("nx").onclick=()=>go(1)
+}
+
+/* ===== MORE PAGE: every pick for one match, grouped by market ===== */
+function renderMore(keepScroll){
+  if(!G.length){route("/0");return}
+  const y=window.scrollY,g=G[i],all=tennisFlat(i).filter(visible);
+  const when=new Date(g[2]).toLocaleString(undefined,{weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+  let h='<a href="#/'+i+'" class="moreback">← Back to match</a><h2 class="moretitle">'+esc(g[0])+' vs '+esc(g[1])+'</h2><p class="moremeta">'+when+' · '+esc(g[4])+'</p>';
+  h+='<div class="morenav"><button id="mpv" aria-label="Previous match">‹</button><span>Match '+(i+1)+' of '+G.length+'</span><button id="mnx" aria-label="Next match">›</button></div>';
+  const order=[],by={};all.forEach(x=>{if(!by[x.market]){by[x.market]=[];order.push(x.market)}by[x.market].push(x)});
+  order.forEach(mk=>{h+='<section class="tier"><h3>'+esc(mk)+'</h3>'+by[mk].map(x=>pickRow(x,false)).join('')+'</section>'});
+  h+='<p class="why">'+slip.length+' pick'+(slip.length===1?'':'s')+' in your bet slip (shown on the match page).</p><p class="why">Only picks at 50% or more that back the favourite are shown. Set handicap is modelled from the match-win chance, at fair odds.</p>';
+  $("morePage").innerHTML=h;
+  wirePicks($("morePage"),g);
+  $("morePage").querySelector(".moreback").onclick=e=>{e.preventDefault();route("/"+i)};
+  $("mpv").onclick=()=>goMore(-1);$("mnx").onclick=()=>goMore(1);
+  if(keepScroll)scrollTo(0,y)
+}
+
+/* ===== PANELS ===== */
+let BYP=[];
+const CN=new Intl.NumberFormat("en",{notation:"compact",maximumFractionDigits:1});
+const fn=x=>x>=1000?CN.format(x):Math.round(x)+"";
+const pc=x=>x>=10?Math.round(x)+"":x>=1?x.toFixed(1):x.toFixed(2);
+function roll(){
+  const s=+$("rs").value||0;let h='<div class="rg"><span></span>'+["Start",1,2,3,4,5].map(x=>'<span class="hh">'+x+'</span>').join("");
+  [[1.5,"ra"],[2,"rb"],[3,"rc"]].forEach(L=>{const o=L[0],r=[0,1,2,3,4,5];
+    h+='<b class="ol '+L[1]+'">'+o.toFixed(1)+'x</b>'+r.map(n=>'<b class="am '+L[1]+'">'+fn(s*Math.pow(o,n))+'</b>').join('')+'<span></span>'+r.map(n=>'<span class="pr">'+pc(Math.pow(1/o,n)*100)+'%</span>').join('')});
+  $("roll").innerHTML=h+'</div>'
+}
+/* best accumulator for a target fair odds: lowest odds at or above the target, then the highest chance. One leg per match, 2 to 5 legs. */
+function bestAcc(T){
+  let best=null;const pool=BYP.filter(f=>f.p>=50);
+  (function walk(start,L,pr){
+    if(L.length>=2){const fair=1/pr;if(fair>=T){const sc=fair-T;if(!best||sc<best.score-1e-9||(Math.abs(sc-best.score)<=1e-9&&pr>best.pr))best={L:L.slice(),pr,fair,score:sc}}}
+    if(L.length===5)return;
+    for(let j=start;j<pool.length;j++)walk(j+1,L.concat(pool[j]),pr*pool[j].p/100)
+  })(0,[],1);
+  return best
+}
+function buildPanels(){
+  BYP=G.map((g,gi)=>{const m=topIdx(g);return{gi,g,m,p:g[3][m],lab:g[m]}}).sort((a,b)=>b.p-a.p);
+  $("topc").innerHTML=BYP.slice(0,5).map((f,n)=>{const other=f.g[0]==f.lab?f.g[1]:f.g[0];
+    return'<button class="tr" data-i="'+n+'"><span class="n">'+(n+1)+'</span><span class="nm"><b>'+esc(f.lab)+'</b><small>v '+esc(other)+'</small></span><span class="pv"><b>'+f.p+'%</b><small>'+(100/f.p).toFixed(2)+'</small></span></button>'}).join("");
+  document.querySelectorAll(".tr").forEach(b=>{b.onclick=()=>{i=BYP[+b.dataset.i].gi;route("/"+i);scrollTo({top:0,behavior:RM?"auto":"smooth"})}});
+  let ac="";[2,3,4,5].forEach(T=>{const a=bestAcc(T);if(!a){ac+='<div class="why">'+T+' odds: not enough 50%+ picks to build one.</div>';return}
+    ac+='<button class="ac" data-acc="'+T+'"><span class="nm"><b>'+T+' odds · '+a.L.length+' picks</b><small>'+a.L.map(f=>esc(f.lab)).join(" · ")+'</small></span><span class="pv"><b>'+pc(a.pr*100)+'%</b><small>'+a.fair.toFixed(2)+'</small></span></button>'});
+  $("accs").innerHTML=ac;
+  document.querySelectorAll("[data-acc]").forEach(b=>{b.onclick=()=>{const a=bestAcc(+b.dataset.acc);if(a)fillAccumulator(a)}})
+}
+
+/* ===== PREDICTION STORAGE + TRACKER =====
+   Every engine pick is saved once and never deleted. Only the result (won/lost) can be set or cleared. */
+let preds=lsGet("ci_preds",[]);
+function savePreds(){
+  let ch=false;
+  ALL.forEach(g=>{const t=g[5],id=g[6];
+    if(preds.some(p=>p.id===id))return;
+    preds.push({id,match:g[0]+" vs "+g[1],when:g[2],market:t.market,odds:t.pickOdds||null,res:""});ch=true});
+  if(ch)lsSet("ci_preds",preds)
+}
+function renderTracker(){
+  const won=preds.filter(p=>p.res==="won").length,lost=preds.filter(p=>p.res==="lost").length,done=won+lost;
+  const od=preds.filter(p=>p.odds),avg=od.length?od.reduce((a,p)=>a+p.odds,0)/od.length:0;
+  const wo=preds.filter(p=>p.res==="won"&&p.odds),avgW=wo.length?wo.reduce((a,p)=>a+p.odds,0)/wo.length:0;
+  let h='<a href="#" class="back" id="trkback">← Back to matches</a><h2>Tracker</h2><div class="stats">'
+   +'<div class="stat"><small>Win rate</small><b>'+(done?(won/done*100).toFixed(1)+'%':'—')+'</b></div>'
+   +'<div class="stat"><small>Average odds</small><b>'+(avg?avg.toFixed(2):'—')+'</b></div>'
+   +'<div class="stat"><small>Won / lost</small><b>'+won+' / '+lost+'</b></div>'
+   +'<div class="stat"><small>Average odds of wins</small><b>'+(avgW?avgW.toFixed(2):'—')+'</b></div></div>'
+   +'<p class="why">'+preds.length+' prediction'+(preds.length===1?'':'s')+' stored, '+(preds.length-done)+' still waiting for a result. Predictions are never deleted. Mark each one Won or Lost once the match is played.</p>';
+  h+=preds.slice().sort((a,b)=>new Date(b.when)-new Date(a.when)).map(p=>'<div class="prow"><b>'+esc(p.match)+'</b><small>'+esc(p.market)+' · '+new Date(p.when).toLocaleDateString(undefined,{month:"short",day:"numeric"})+'</small><div class="rb2"><button class="w'+(p.res==="won"?' on':'')+'" data-id="'+esc(p.id)+'" data-r="won">Won</button><button class="l'+(p.res==="lost"?' on':'')+'" data-id="'+esc(p.id)+'" data-r="lost">Lost</button><span>'+(p.odds?p.odds.toFixed(2):'no price')+'</span></div></div>').join('');
+  $("trackPage").innerHTML=h;
+  $("trkback").onclick=e=>{e.preventDefault();route("/"+i)};
+  $("trackPage").querySelectorAll("[data-id]").forEach(b=>{b.onclick=()=>{const p=preds.find(x=>x.id===b.dataset.id);if(!p)return;p.res=p.res===b.dataset.r?"":b.dataset.r;lsSet("ci_preds",preds);renderTracker()}})
+}
+
+/* ===== INPUT ===== */
+let sx=0,sy=0;
+$("st").addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});
+$("st").addEventListener("touchend",e=>{const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){swiped=true;go(dx<0?1:-1);setTimeout(()=>{swiped=false},400)}},{passive:true});
+addEventListener("keydown",e=>{
+  if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName))return;
+  const d=e.key==="ArrowRight"?1:e.key==="ArrowLeft"?-1:0;if(!d)return;
+  if(view==="main")go(d);else if(view==="more")goMore(d)
+});
+$("backlink").onclick=e=>{e.preventDefault();route("/"+i)};
+$("aboutlink").onclick=e=>{e.preventDefault();route("about")};
+$("tracklink").onclick=e=>{e.preventDefault();route("tracker")};
+$("ml").onclick=e=>{e.preventDefault();route("/more/"+i)};
+
+/* ===== START ===== */
+const CATS=[["all","All"],["ATP 1000","ATP 1000"],["WTA 1000","WTA 1000"],["Challenger","Challengers"]];
+function renderChips(){
+  $("chips").innerHTML=CATS.map(c=>'<button data-c="'+c[0]+'" aria-pressed="'+(filt.cat===c[0])+'">'+c[1]+'</button>').join("")+'<button data-p="1" aria-pressed="'+filt.pickem+'">Pick-em 1.70–2.50</button>';
+  $("chips").querySelectorAll("[data-c]").forEach(b=>{b.onclick=()=>{filt.cat=b.dataset.c;applyFilter(false)}});
+  $("chips").querySelector("[data-p]").onclick=()=>{filt.pickem=!filt.pickem;applyFilter(false)}
+}
+function applyFilter(keep){
+  G=ALL.filter(g=>(filt.cat==="all"||g[5].cat===filt.cat)&&(!filt.pickem||g[5].pickem));
+  i=keep?Math.min(i,Math.max(0,G.length-1)):0;
+  buildPanels();renderChips();
+  if(view==="main"){renderBetDay();render(true)}else if(view==="more")renderMore(false);else if(view==="track")renderTracker()
+}
+const setStatus=t=>{$("status").textContent=t};
+async function load(){
+  setStatus("Loading matches…");
+  try{
+    const r=await fetch("/.netlify/functions/compute-odds"),d=await r.json();
+    if(!r.ok||!d.matches)throw new Error(d.error||("HTTP "+r.status));
+    ALL=d.matches;META=d.meta;savePreds();
+    const sk=Object.keys(d.meta.skipped||{}).length?" · skipped: "+Object.entries(d.meta.skipped).map(e=>e[1]+" "+e[0]).join(", "):"";
+    setStatus(d.matches.length+" ATP/WTA 1000 and Challenger matches · Pinnacle lines via Pinnwire · updated "+new Date(d.meta.generated_at).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+(d.stale?" (cached: "+d.warning+")":"")+sk)
+  }catch(e){ALL=[];META={};setStatus("Couldn't load matches: "+e.message)}
+  applyFilter(false)
+}
+$("rs").oninput=roll;roll();renderChips();buildPanels();
+load().then(()=>{if(location.hash)fromHash()});
+</script>
+</body>
+</html>
