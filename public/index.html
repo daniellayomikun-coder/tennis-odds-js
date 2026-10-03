@@ -120,10 +120,19 @@ h1{font:800 clamp(2.4rem,9vw,3.4rem)/1 Fraunces,Georgia,serif;letter-spacing:-.0
 .chips button[aria-pressed="true"]{background:#e6f4ef;color:#0b2a31;border-color:#e6f4ef}
 .mdl{display:grid;grid-template-columns:1fr auto auto;gap:4px 14px;font-size:.8rem;color:#a9d3c6;align-items:baseline}
 .mdl b{color:#fff;font-weight:700}.mdl .h{color:#7fb3a5;font-size:.68rem}.mdl span:not(.h){text-align:right;font-variant-numeric:tabular-nums}
+.toprow nav{flex-wrap:wrap;justify-content:flex-end;gap:6px 14px}
+.toprow a{font-size:.82rem}
+.sum{margin:10px 0 0;text-align:center;color:#a9d3c6;font-size:.88rem;line-height:1.45}.sum b{color:#fff}
+.bigbtn{display:block;width:100%;margin:12px 0 0;padding:13px;border-radius:14px;border:1px solid #2b6268;background:#0e3239;color:#fff;font:600 .95rem "Work Sans",sans-serif;cursor:pointer}
+.rcard{background:#0e3239;border:1px solid #23555c;border-radius:18px;padding:12px 14px;margin-top:14px}
+.rcard h3{margin:0;color:#fff;font:800 1.15rem Fraunces,Georgia,serif}
+.rcard .rs{color:#a9d3c6;font-size:.8rem;margin:3px 0 8px}
+.rleg{display:grid;grid-template-columns:1fr auto;gap:10px;border-top:1px solid #1d4a50;padding:7px 0;font-size:.82rem}
+.rleg b{color:#fff;display:block}.rleg small{color:#8fb9ad}.rleg span{text-align:right;color:#a9d3c6;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
-<div class="bar"><div class="w"><div class="toprow"><h1>Call it.</h1><nav><a href="#tracker" id="tracklink">Tracker</a><a href="#about" id="aboutlink">How odds work</a></nav></div></div></div>
+<div class="bar"><div class="w"><div class="toprow"><h1>Call it.</h1><nav><a href="#rollover" id="rolllink">Rollover</a><a href="#tracker" id="tracklink">Tracker</a><a href="#about" id="aboutlink">How odds work</a></nav></div></div></div>
 <div class="chips" id="chips" role="group" aria-label="Filter matches"></div>
 <div class="why" id="status" style="max-width:720px;margin:6px auto 0;padding:0 20px"></div>
 <section class="betday" aria-label="Bet of the Day" id="betday"></section>
@@ -131,7 +140,7 @@ h1{font:800 clamp(2.4rem,9vw,3.4rem)/1 Fraunces,Georgia,serif;letter-spacing:-.0
 <article class="about" id="aboutPage" hidden>
 <a href="#" id="backlink">← Back to matches</a>
 <h2>How the numbers work</h2>
-<p>Only ATP 1000, WTA 1000 and ATP Challenger singles are shown. Pinnacle often posts a game handicap and a total-games line but no moneyline. We read those lines, strip the bookmaker margin, and fit the serve strength of both players that reproduces them. That gives a win probability, fair moneyline odds, an estimated bookmaker moneyline, and a predicted total games and handicap. When Pinnacle does post a real moneyline, we show it next to the model.</p>
+<p>Only ATP 1000, WTA 1000 and ATP Challenger singles are shown. Total games and handicaps are priced from the same fitted model, so they always agree with the bookmaker line they were fitted to. The predicted totals shown are the typical (median) result, the same kind of number as a bookmaker line. The plain average runs about 1 to 2 games higher because long three-set matches pull it up. European handicap is the 3-way version: the favourite gives 1 to 4 games, and landing exactly on the number is a draw. The double chances (1X, X2, W1 or W2) protect you against the draw. Pinnacle often posts a game handicap and a total-games line but no moneyline. We read those lines, strip the bookmaker margin, and fit the serve strength of both players that reproduces them. That gives a win probability, fair moneyline odds, an estimated bookmaker moneyline, and a predicted total games and handicap. When Pinnacle does post a real moneyline, we show it next to the model.</p>
 <h3>Fair odds</h3><p>Fair odds are just 100 divided by the win chance. A 50% chance is fair odds of 2.00: bet 1 and get 2 back, on average, with no house edge. Real bookmakers pay less than fair odds.</p>
 <h3>Rollovers</h3><p>Rolling a bet means putting the whole return on the next pick. The payout multiplies fast, but the chance of survival shrinks just as fast, and at fair odds the two cancel out.</p>
 <h3>Accumulators</h3><p>An accumulator needs every leg to land. Chances multiply, so four picks at 80% each only land about 41% of the time.</p>
@@ -139,6 +148,7 @@ h1{font:800 clamp(2.4rem,9vw,3.4rem)/1 Fraunces,Georgia,serif;letter-spacing:-.0
 </article>
 <article class="more" id="morePage" hidden></article>
 <article class="trk" id="trackPage" hidden></article>
+<article class="trk" id="rollPage" hidden></article>
 <div class="pans" id="pans"><div class="strip">
 <section class="pn2" aria-label="Rollover"><h2>Rollover</h2><p class="cap">5 rolls · start <input id="rs" type="number" min="1" value="100" aria-label="Starting amount"></p><div id="roll"></div></section>
 <section class="pn2" aria-label="Top bets"><h2>Top bets</h2><p class="cap">Chance and fair odds. Tap to open.</p><div id="topc"></div></section>
@@ -161,36 +171,30 @@ const topIdx=g=>g[3][0]>=g[3][1]?0:1;
 const tennisPick=g=>g[5];
 const tennisProb=t=>t.prob||100/(t.pickOdds||t.odds[1]);
 
-/* set handicap from the match-win chance (best of 3) */
-function setHcaps(g){
-  const S=g[5]&&g[5].sets;
-  if(S){const fv=topIdx(g),mk=(pl,line,pr,minus,ix)=>({market:"Set handicap",pick:pl+" "+line+" sets",prob:r1(pr*100),odds:+(1/pr).toFixed(2),minus,side:ix===fv?"f":"u"});
-    return[mk(g[0],"-1.5",S.A20,true,0),mk(g[1],"-1.5",S.B20,true,1),mk(g[0],"+1.5",1-S.B20,false,0),mk(g[1],"+1.5",1-S.A20,false,1)].filter(x=>x.prob>=1&&x.prob<99.9)}
-  const p=g[3][0]/100,f=s=>s*s*(3-2*s);let lo=0,hi=1;
-  for(let n=0;n<40;n++){const m=(lo+hi)/2;if(f(m)<p)lo=m;else hi=m}
-  const s=(lo+hi)/2,q=1-s,p1m=s*s,p2m=q*q,p1p=1-p2m,p2p=1-p1m,fv=topIdx(g);
-  const mk=(pl,line,pr,minus,ix)=>({market:"Set handicap",pick:pl+" "+line+" sets",prob:r1(pr*100),odds:+(1/pr).toFixed(2),minus,side:ix===fv?"f":"u"});
-  return[mk(g[0],"-1.5",p1m,true,0),mk(g[1],"-1.5",p2m,true,1),mk(g[0],"+1.5",p1p,false,0),mk(g[1],"+1.5",p2p,false,1)].filter(x=>x.prob>=1&&x.prob<99.9)
-}
-/* markets for one match: engine pick, Winner, Set handicap */
+/* every priced market of one match comes from the server: t.markets = [{k,g,l,p,o,s,r,a}] */
 function tennisFlat(n){
-  const g=G[n],t=g[5],out=[],k=g[6]+"-",fv=topIdx(g);
-  if(t.pickOdds)out.push({key:k+"eng",market:t.market,pick:t.market,prob:tennisProb(t),odds:t.pickOdds,eng:true,short:t.prediction});
-  out.push({key:k+"w0",market:"Winner",pick:g[0],prob:g[3][0],odds:t.odds[0],side:fv===0?"f":"u"},{key:k+"w1",market:"Winner",pick:g[1],prob:g[3][1],odds:t.odds[1],side:fv===1?"f":"u"});
-  setHcaps(g).forEach((h,j)=>out.push(Object.assign({key:k+"sh"+j},h)));
-  return out
+  const g=G[n],t=g[5];
+  return(t.markets||[]).map(m=>({key:g[6]+"-"+m.k,market:m.g,pick:m.l,prob:m.p,odds:m.o,side:m.s,real:m.r==="p",all:!!m.a}))
 }
-const visible=x=>x.eng||(x.side!=="u"&&x.prob>=50);
-function tennisTop(n){
-  const L=tennisFlat(n).filter(visible),e=L.find(x=>x.eng),out=e?[e]:[];
-  L.filter(x=>!x.eng).sort((a,b)=>b.prob-a.prob).slice(0,TOP_N-out.length).forEach(x=>out.push(x));
-  return out
+const visible=x=>x.all||(x.side!=="u"&&x.prob>=50);
+const nm=n=>String(n).split(" ").slice(-1)[0];
+const sg=v=>(v>0?"+":"")+v.toFixed(1);
+const legItem=(L,j)=>({key:L.x.key,match:L.g[0]+" vs "+L.g[1],market:L.x.market,pick:L.x.pick,odds:L.x.odds});
+/* best single pick of each match: the highest chance that still pays at least minOdds */
+function bestLegs(minOdds,winnerOnly){
+  const out=[];
+  G.forEach((g,gi)=>{
+    const c=tennisFlat(gi).filter(x=>x.side!=="u"&&x.prob>=50&&x.odds>=minOdds&&(!winnerOnly||x.market==="Winner")&&!/no draw|^Draw/.test(x.pick)).sort((a,b)=>b.prob-a.prob)[0];
+    if(c)out.push({gi,g,x:c,p:c.prob})
+  });
+  return out.sort((a,b)=>b.p-a.p)
 }
+const chanceOf=L=>L.reduce((a,l)=>a*l.p/100,1),oddsOf=L=>L.reduce((a,l)=>a*l.x.odds,1);
 
 /* ===== BET OF THE DAY ===== */
 function betOfDay(){
   const pool=[];
-  G.forEach((g,gi)=>tennisFlat(gi).filter(x=>x.eng||x.minus).filter(x=>x.prob>=50&&x.side!=="u").forEach(x=>pool.push({m:gi,gi,key:x.key,match:g[0]+" vs "+g[1],market:x.market,pick:x.pick,short:x.eng?x.short:x.pick,prob:x.prob,odds:x.odds})));
+  G.forEach((g,gi)=>tennisFlat(gi).filter(x=>x.prob>=50&&x.side!=="u"&&x.odds>=1.08&&!x.all).sort((a,b)=>b.prob-a.prob).slice(0,6).forEach(x=>pool.push({m:gi,gi,key:x.key,match:g[0]+" vs "+g[1],market:x.market,pick:x.pick,short:x.pick,prob:x.prob,odds:x.odds})));
   const n=pool.length;let best=null;
   const consider=legs=>{let odds=1,prob=1;legs.forEach(l=>{odds*=l.odds;prob*=l.prob/100});if(odds<MIN_BOD_ODDS)return;if(!best||prob>best.prob+1e-9||(Math.abs(prob-best.prob)<=1e-9&&legs.length<best.legs.length))best={legs,odds,prob}};
   for(let a=0;a<n;a++){consider([pool[a]]);for(let b=a+1;b<n;b++){if(pool[b].m===pool[a].m)continue;consider([pool[a],pool[b]]);for(let c=b+1;c<n;c++){if(pool[c].m===pool[a].m||pool[c].m===pool[b].m)continue;consider([pool[a],pool[b],pool[c]])}}}
@@ -221,10 +225,9 @@ function renderSlip(){
   el.querySelectorAll("[data-remove]").forEach(b=>{b.onclick=()=>{slip=slip.filter(x=>x.key!==b.dataset.remove);slipSave();renderSlip()}});
   $("slipstake").oninput=renderSlip
 }
-function fillAccumulator(a){
-  slip=a.L.map((f,j)=>({key:"acc-"+f.gi+"-"+j,match:f.g[0]+" vs "+f.g[1],market:"Winner",pick:f.lab,odds:tennisPick(f.g).odds[f.m]}));
-  slipSave();i=a.L[0].gi;route("/"+i);
-  setTimeout(()=>{const b=$("betslip");if(b)b.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"})},120)
+function fillSlip(L){
+  slip=L.map(legItem);slipSave();i=L[0].gi;route("/"+i);
+  setTimeout(()=>{const b=$("betslip");if(b)b.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"})},150)
 }
 
 /* ===== ROUTING (#/3 = match page, #/more/3 = all picks, #about) ===== */
@@ -232,7 +235,7 @@ function route(h){routed=h;try{location.hash=h}catch(e){}apply(h)}
 function setView(v){
   view=v;
   const show=(id,on)=>{const el=$(id);if(el)el.hidden=!on};
-  show("aboutPage",v==="about");show("trackPage",v==="track");show("morePage",v==="more");
+  show("aboutPage",v==="about");show("trackPage",v==="track");show("rollPage",v==="roll");show("morePage",v==="more");show("chips",v==="main"||v==="more"||v==="roll");show("status",v==="main"||v==="more"||v==="roll");
   ["st","betday","pans","fine","morelinks"].forEach(id=>show(id,v==="main"))
 }
 function go(d){if(!G.length)return;i=(i+d+G.length)%G.length;route("/"+i)}
@@ -240,6 +243,7 @@ function goMore(d){if(!G.length)return;i=(i+d+G.length)%G.length;route("/more/"+
 function apply(h){
   if(h==="about"){setView("about");scrollTo(0,0);return}
   if(h==="tracker"){setView("track");renderTracker();scrollTo(0,0);return}
+  if(h==="rollover"){setView("roll");renderRoll();scrollTo(0,0);return}
   let m=h.match(/^\/more\/(\d+)$/);
   if(m){i=Math.max(0,Math.min(+m[1],G.length-1));setView("more");renderMore(false);scrollTo(0,0);return}
   const was=view!=="main";setView("main");if(was)scrollTo(0,0);
@@ -261,27 +265,30 @@ function wirePicks(root,g){
 }
 function modelBox(g){
   const t=g[5],M=t.model;if(!M)return"";
-  const sg=v=>(v>0?"+":"")+v.toFixed(1),nm=n=>String(n).split(" ").slice(-1)[0];
   const row=(l,a,b)=>'<b>'+l+'</b><span>'+a+'</span><span>'+b+'</span>';
+  const med=M.medSpread==null?M.spread:M.medSpread;
   return'<div class="pickbox"><h3>Model numbers</h3><div class="mdl"><span class="h"></span><span class="h">'+esc(nm(g[0]))+'</span><span class="h">'+esc(nm(g[1]))+'</span>'
    +row("Win chance",g[3][0]+"%",g[3][1]+"%")+row("Fair moneyline",M.fair[0].toFixed(2),M.fair[1].toFixed(2))
    +row(t.src==="Pinnacle moneyline"?"Pinnacle moneyline":"Est. bookmaker moneyline",t.odds[0].toFixed(2),t.odds[1].toFixed(2))
    +row("Hold chance",M.holds[0]+"%",M.holds[1]+"%")
-   +'<b>Predicted handicap</b><span>'+esc(nm(g[0]))+' '+sg(-M.spread)+'</span><span>market '+sg(-M.mktSpread)+'</span>'
-   +'<b>Predicted total games</b><span>'+M.total.toFixed(1)+'</span><span>market '+M.mktTotal.toFixed(1)+'</span></div>'
-   +'<p class="why">'+(M.loose?"The model could not match the total-games line exactly, so the predicted total differs from the market. ":"")+"Predicted handicap and total are the model average results; market numbers are the middle of the bookmaker lines.</p></div>"
+   +'<b>Predicted handicap</b><span>'+esc(nm(g[0]))+' '+sg(-med)+'</span><span>market '+sg(-M.mktSpread)+'</span>'
+   +'<b>Predicted total games</b><span>'+(M.medTotal==null?M.total.toFixed(1):M.medTotal.toFixed(1))+'</span><span>market '+M.mktTotal.toFixed(1)+'</span>'
+   +'<b>Average total games</b><span>'+M.total.toFixed(1)+'</span><span></span>'
+   +'<b>Over '+M.mktTotal.toFixed(1)+' chance</b><span>'+M.pOverMkt+'%</span><span></span></div>'
+   +'<p class="why">Predicted handicap and total are the typical (median) result, the same kind of number as a bookmaker line. The average total is higher because long three-set matches pull it up.'+(M.loose?" The total-games line could only be matched loosely for this match.":"")+'</p></div>'
 }
 function render(anim){
   if(!G.length){$("st").innerHTML='<p class="fair" style="padding:60px 0">'+(META?"No matches for this filter right now.":"Loading matches…")+'</p>';return}
-  const g=G[i],m=topIdx(g),t=tennisPick(g),key=g[6],cols=["#1a7f8f","#e8574a"];
+  const g=G[i],m=topIdx(g),t=tennisPick(g),M=t.model,key=g[6],cols=["#1a7f8f","#e8574a"];
   const when=new Date(g[2]).toLocaleString(undefined,{weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
   let h='<div class="meta"><span>'+when+'</span><span>'+esc(g[4])+'</span></div><div class="panels">';
-  [g[0],g[1]].forEach((nm,k)=>{h+='<button class="pn" aria-pressed="'+(calls[key]===k)+'" style="background:'+cols[k]+'"><span class="tg">'+(k==m?"<i>Model pick</i>":"")+(calls[key]===k?'<i class="y">Your call</i>':"")+'</span><span class="row"><b>'+esc(nm)+'</b><em>'+g[3][k]+'%</em></span></button>'});
+  [g[0],g[1]].forEach((n,k)=>{h+='<button class="pn" aria-pressed="'+(calls[key]===k)+'" style="background:'+cols[k]+'"><span class="tg">'+(k==m?"<i>Model pick</i>":"")+(calls[key]===k?'<i class="y">Your call</i>':"")+'</span><span class="row"><b>'+esc(n)+'</b><em>'+g[3][k]+'%</em></span></button>'});
   h+='</div><p class="fair">Fair odds on '+esc(g[m])+': <b>'+(100/g[3][m]).toFixed(2)+'</b></p>';
-  h+='<div class="pickbox"><h3>Top picks</h3>'+tennisTop(i).map((x,r)=>pickRow(x,r===0)).join('')+'<p class="why">'+esc(t.reason)+'</p></div>'+modelBox(g);
+  if(M)h+='<p class="sum">Predicted: <b>'+esc(nm(g[0]))+' '+sg(-(M.medSpread==null?M.spread:M.medSpread))+'</b> games · <b>'+(M.medTotal==null?M.total:M.medTotal).toFixed(1)+'</b> total games <span style="opacity:.7">(market '+M.mktTotal.toFixed(1)+')</span></p>';
+  h+='<button class="bigbtn" id="allm">All markets and model numbers →</button>';
   h+='<section class="betslip" id="betslip" aria-label="Bet slip"></section><div class="nav"><button id="pv" aria-label="Previous match">‹</button><div class="dots" aria-label="Match '+(i+1)+' of '+G.length+'">'+G.map((_,j)=>'<i class="'+(j==i?"on":"")+'"></i>').join("")+'</div><button id="nx" aria-label="Next match">›</button></div><p class="fair" id="mine"></p>';
   $("st").innerHTML=h;
-  renderSlip();wirePicks($("st"),g);$("ml").href="#/more/"+i;
+  renderSlip();$("ml").href="#/more/"+i;$("allm").onclick=()=>route("/more/"+i);
   let n=0,ag=0;G.forEach(x=>{const c=calls[x[6]];if(c!==undefined){n++;if(c===topIdx(x))ag++}});
   $("mine").textContent=n?"Your calls: "+n+" of "+G.length+" · With the model: "+ag+" · Against it: "+(n-ag):"Tap a side to make your call. Swipe for the next match.";
   const ps=[].slice.call(document.querySelectorAll(".pn"));
@@ -290,16 +297,17 @@ function render(anim){
   $("pv").onclick=()=>go(-1);$("nx").onclick=()=>go(1)
 }
 
-/* ===== MORE PAGE: every pick for one match, grouped by market ===== */
+/* ===== MORE PAGE: model numbers + every market for one match ===== */
 function renderMore(keepScroll){
   if(!G.length){route("/0");return}
   const y=window.scrollY,g=G[i],all=tennisFlat(i).filter(visible);
   const when=new Date(g[2]).toLocaleString(undefined,{weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
   let h='<a href="#/'+i+'" class="moreback">← Back to match</a><h2 class="moretitle">'+esc(g[0])+' vs '+esc(g[1])+'</h2><p class="moremeta">'+when+' · '+esc(g[4])+'</p>';
   h+='<div class="morenav"><button id="mpv" aria-label="Previous match">‹</button><span>Match '+(i+1)+' of '+G.length+'</span><button id="mnx" aria-label="Next match">›</button></div>';
+  h+=modelBox(g);
   const order=[],by={};all.forEach(x=>{if(!by[x.market]){by[x.market]=[];order.push(x.market)}by[x.market].push(x)});
   order.forEach(mk=>{h+='<section class="tier"><h3>'+esc(mk)+'</h3>'+by[mk].map(x=>pickRow(x,false)).join('')+'</section>'});
-  h+='<p class="why">'+slip.length+' pick'+(slip.length===1?'':'s')+' in your bet slip (shown on the match page).</p><p class="why">Only picks at 50% or more that back the favourite are shown. Set handicap is modelled from the match-win chance, at fair odds.</p>';
+  h+='<p class="why">'+slip.length+' pick'+(slip.length===1?'':'s')+' in your bet slip (shown on the match page).</p><p class="why">Picks under 50% are hidden, except European handicap, which always shows every outcome. Prices marked as fair odds are 100 divided by the chance, with no bookmaker margin. Pinnacle prices are used where that exact line is on their board.</p>';
   $("morePage").innerHTML=h;
   wirePicks($("morePage"),g);
   $("morePage").querySelector(".moreback").onclick=e=>{e.preventDefault();route("/"+i)};
@@ -318,25 +326,33 @@ function roll(){
     h+='<b class="ol '+L[1]+'">'+o.toFixed(1)+'x</b>'+r.map(n=>'<b class="am '+L[1]+'">'+fn(s*Math.pow(o,n))+'</b>').join('')+'<span></span>'+r.map(n=>'<span class="pr">'+pc(Math.pow(1/o,n)*100)+'%</span>').join('')});
   $("roll").innerHTML=h+'</div>'
 }
-/* best accumulator for a target fair odds: lowest odds at or above the target, then the highest chance. One leg per match, 2 to 5 legs. */
-function bestAcc(T){
-  let best=null;const pool=BYP.filter(f=>f.p>=50);
-  (function walk(start,L,pr){
-    if(L.length>=2){const fair=1/pr;if(fair>=T){const sc=fair-T;if(!best||sc<best.score-1e-9||(Math.abs(sc-best.score)<=1e-9&&pr>best.pr))best={L:L.slice(),pr,fair,score:sc}}}
-    if(L.length===5)return;
-    for(let j=start;j<pool.length;j++)walk(j+1,L.concat(pool[j]),pr*pool[j].p/100)
-  })(0,[],1);
-  return best
-}
 function buildPanels(){
-  BYP=G.map((g,gi)=>{const m=topIdx(g);return{gi,g,m,p:g[3][m],lab:g[m]}}).sort((a,b)=>b.p-a.p);
-  $("topc").innerHTML=BYP.slice(0,5).map((f,n)=>{const other=f.g[0]==f.lab?f.g[1]:f.g[0];
-    return'<button class="tr" data-i="'+n+'"><span class="n">'+(n+1)+'</span><span class="nm"><b>'+esc(f.lab)+'</b><small>v '+esc(other)+'</small></span><span class="pv"><b>'+f.p+'%</b><small>'+(100/f.p).toFixed(2)+'</small></span></button>'}).join("");
-  document.querySelectorAll(".tr").forEach(b=>{b.onclick=()=>{i=BYP[+b.dataset.i].gi;route("/"+i);scrollTo({top:0,behavior:RM?"auto":"smooth"})}});
-  let ac="";[2,3,4,5].forEach(T=>{const a=bestAcc(T);if(!a){ac+='<div class="why">'+T+' odds: not enough 50%+ picks to build one.</div>';return}
-    ac+='<button class="ac" data-acc="'+T+'"><span class="nm"><b>'+T+' odds · '+a.L.length+' picks</b><small>'+a.L.map(f=>esc(f.lab)).join(" · ")+'</small></span><span class="pv"><b>'+pc(a.pr*100)+'%</b><small>'+a.fair.toFixed(2)+'</small></span></button>'});
-  $("accs").innerHTML=ac;
-  document.querySelectorAll("[data-acc]").forEach(b=>{b.onclick=()=>{const a=bestAcc(+b.dataset.acc);if(a)fillAccumulator(a)}})
+  const W=bestLegs(1.05,true);
+  $("topc").innerHTML=W.slice(0,5).map((f,n)=>{const g=f.g,other=f.x.pick===g[0]?g[1]:g[0];
+    return'<button class="tr" data-i="'+n+'"><span class="n">'+(n+1)+'</span><span class="nm"><b>'+esc(f.x.pick)+'</b><small>v '+esc(other)+'</small></span><span class="pv"><b>'+f.p+'%</b><small>'+f.x.odds.toFixed(2)+'</small></span></button>'}).join("")||'<div class="why">No picks yet.</div>';
+  document.querySelectorAll(".tr").forEach(b=>{b.onclick=()=>{i=W[+b.dataset.i].gi;route("/"+i);scrollTo({top:0,behavior:RM?"auto":"smooth"})}});
+  let ac="";
+  [2,3,4,5].forEach(k=>{const L=W.slice(0,k);if(L.length<k)return;
+    ac+='<button class="ac" data-acc="'+k+'"><span class="nm"><b>'+k+'-fold · safest '+k+' winners</b><small>'+L.map(f=>esc(nm(f.x.pick.replace(" Match Winner",""))) ).join(" · ")+'</small></span><span class="pv"><b>'+pc(chanceOf(L)*100)+'%</b><small>'+oddsOf(L).toFixed(2)+'</small></span></button>'});
+  $("accs").innerHTML=ac||'<div class="why">Not enough matches yet.</div>';
+  document.querySelectorAll("[data-acc]").forEach(b=>{b.onclick=()=>{const L=W.slice(0,+b.dataset.acc);if(L.length)fillSlip(L)}})
+}
+
+/* ===== ROLLOVER PAGE: the safest pick of each match, chained until the combined odds reach a target ===== */
+function renderRoll(){
+  const legs=bestLegs(1.10,false),el=$("rollPage");
+  let h='<a href="#" class="back" id="rlback">← Back to matches</a><h2>Rollover</h2><p class="why" style="font-size:.85rem">The single safest pick of every match (the highest chance that still pays at least 1.10), chained from the most likely downward until the combined odds reach each target. Odds here are fair odds or Pinnacle where posted. Chance of all landing is about 1 divided by the combined odds, so a 2.00 rollover can never be much better than a coin flip. What the safest picks buy you is that no single leg is a long shot.</p>';
+  if(!legs.length)h+='<p class="why">No matches to build from right now.</p>';
+  [2,5,10].forEach(T=>{
+    const L=[];for(const l of legs){L.push(l);if(oddsOf(L)>=T)break}
+    const ok=oddsOf(L)>=T;
+    h+='<div class="rcard"><h3>Rollover to '+T.toFixed(2)+(ok?'':'+')+'</h3><p class="rs">'+L.length+' picks · combined odds <b style="color:#fff">'+oddsOf(L).toFixed(2)+'</b> · chance all land <b style="color:#fff">'+pc(chanceOf(L)*100)+'%</b>'+(ok?'':' · not enough matches to reach '+T+' today')+'</p>'
+     +L.map(l=>'<div class="rleg"><div><b>'+esc(l.x.pick)+'</b><small>'+esc(l.g[0])+' vs '+esc(l.g[1])+' · '+esc(l.x.market)+'</small></div><span>'+l.p+'%<br>'+l.x.odds.toFixed(2)+'</span></div>').join('')
+     +(L.length?'<button class="bigbtn" data-roll="'+T+'">Add all '+L.length+' to bet slip</button>':'')+'</div>'
+  });
+  el.innerHTML=h;
+  $("rlback").onclick=e=>{e.preventDefault();route("/"+i)};
+  el.querySelectorAll("[data-roll]").forEach(b=>{b.onclick=()=>{const T=+b.dataset.roll,L=[];for(const l of legs){L.push(l);if(oddsOf(L)>=T)break}fillSlip(L)}})
 }
 
 /* ===== PREDICTION STORAGE + TRACKER =====
@@ -377,6 +393,7 @@ addEventListener("keydown",e=>{
 $("backlink").onclick=e=>{e.preventDefault();route("/"+i)};
 $("aboutlink").onclick=e=>{e.preventDefault();route("about")};
 $("tracklink").onclick=e=>{e.preventDefault();route("tracker")};
+$("rolllink").onclick=e=>{e.preventDefault();route("rollover")};
 $("ml").onclick=e=>{e.preventDefault();route("/more/"+i)};
 
 /* ===== START ===== */
@@ -390,7 +407,7 @@ function applyFilter(keep){
   G=ALL.filter(g=>(filt.cat==="all"||g[5].cat===filt.cat)&&(!filt.pickem||g[5].pickem));
   i=keep?Math.min(i,Math.max(0,G.length-1)):0;
   buildPanels();renderChips();
-  if(view==="main"){renderBetDay();render(true)}else if(view==="more")renderMore(false);else if(view==="track")renderTracker()
+  if(view==="main"){renderBetDay();render(true)}else if(view==="more")renderMore(false);else if(view==="track")renderTracker();else if(view==="roll")renderRoll()
 }
 const setStatus=t=>{$("status").textContent=t};
 async function load(){
